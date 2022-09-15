@@ -54,10 +54,19 @@ namespace Zork
         private static bool Move(Commands command)
         {
             
+            
 
             bool isValidMove = true;
             switch (command)
             {
+                case Commands.NORTH when Location.Row < Rooms.GetLength(0) - 1:
+                    Location.Row++;
+                    break;
+
+                case Commands.SOUTH when Location.Row > 0:
+                    Location.Row--;
+                    break;
+                
                 case Commands.EAST when Location.Column < Rooms.GetLength(1) - 1:
                     Location.Column++;
                     break;
@@ -81,16 +90,20 @@ namespace Zork
 
         private static readonly string[,] Rooms =
         {
-            {"Forest", "West of House", "Behind House", "Clearing", "Canyon View" }
+            {"Rocky Trail", "South of House", "Canyon View" },
+            {"Forest", "West of House", "Behind House" },
+            {"Dense Woods", "North of House", "Clearing" }
 
         };
 
         private static readonly List<Commands> Directions = new List<Commands>
         {
+            Commands.NORTH,
+            Commands.SOUTH,
             Commands.EAST,
             Commands.WEST
         };
 
-        private static (int Row, int Column) Location;
+        private static (int Row, int Column) Location = (1, 1);
     }
 }
