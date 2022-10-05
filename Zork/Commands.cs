@@ -1,7 +1,6 @@
-﻿
-namespace Zork
+﻿namespace Zork
 {
-    enum Commands
+enum Commands
     {
         QUIT,
         LOOK,

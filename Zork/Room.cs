@@ -1,8 +1,8 @@
 ﻿namespace Zork
 {
-    public class Room
+    internal class Room
     {
-        public string Name { get; }
+        public string Name { get;  }
     
         public string Description { get; set; }
 
@@ -12,6 +12,9 @@
             Description = description;
         }
 
-        public override string ToString() => Name;
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
