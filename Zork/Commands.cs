@@ -2,12 +2,12 @@
 {
 enum Commands
     {
-        QUIT,
-        LOOK,
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST,
-        UNKNOWN
+        Quit,
+        Look,
+        North,
+        South,
+        East,
+        West,
+        Unknown
     }
 }
