@@ -9,63 +9,40 @@ namespace Zork.Common
 
         public Player Player { get; }
 
-        public Room Room { get; }
+        public IInputService Input { get; private set; }
         
         public IOutputService Output { get; private set; }
+
+       public bool IsRunning { get; private set; }
 
         public Game(World world, string startingLocation)
         {
             World = world;
             Player = new Player(World, startingLocation);
         }
-        
-        public void Run(IOutputService output)
+
+        public void Run(IInputService input, IOutputService output)
         {
-            Output = output;
+            Input = input ?? throw new ArgumentNullException(nameof(input));
+            Output = output ?? throw new ArgumentNullException(nameof(output));
 
-            Room previousRoom = null;
-            bool isRunning = true;
-            while (isRunning)
-            {
-                Output.WriteLine(Player.CurrentRoom);
-                if (previousRoom != Player.CurrentRoom)
-                {
-                    Output.WriteLine(Player.CurrentRoom.Description);
-                    previousRoom = Player.CurrentRoom;
-                }
-               
-                Output.Write("> ");
+            Input.InputReceived += Input_InputReceived;
+            IsRunning = true;
+            Output.WriteLine(Player.CurrentRoom);
+            Output.WriteLine(Player.CurrentRoom.Description);
+        }
 
-                string inputString = Console.ReadLine().Trim();
-                
-                char  separator = ' ';
-                string[] commandTokens = inputString.Split(separator);
+        private void OnInputReceived(object sender, string inputString)
+        {
+            Commands command = ToCommand(inputString);
 
-                string verb = null;
-                string subject = null;
-
-                    if (commandTokens.Length == 0)
-                {
-                    continue;
-                }
-                else if (commandTokens.Length == 1)
-                {
-                    verb = commandTokens[0];
-
-                }
-                else
-                {
-                    verb = commandTokens[0];
-                    subject = commandTokens[1];
-                }
-
-                Commands command = ToCommand(verb);
-                string outputString;
-                switch (command)
+            Room previousLocation = Player.CurrentRoom;
+            
+            switch (command)
                 {
                     case Commands.Quit:
                         isRunning = false;
-                        outputString = "Thank you for playing!";
+                        Output.WriteLine("Thank you for playing!");
                         break;
 
                     case Commands.Look:
@@ -74,7 +51,7 @@ namespace Zork.Common
                         {
                             Output.WriteLine(item.Description);
                         }
-                        outputString = null;
+                        
                         break;
 
                     case Commands.North:
@@ -84,11 +61,11 @@ namespace Zork.Common
                         Directions direction = (Directions)command;
                         if (Player.Move(direction))
                         {
-                            outputString = $"You moved {direction}.";
+                            Output.WriteLine($"You moved {direction}.");
                         }
                         else
                         {
-                            outputString = "The way is shut!";
+                            Output.WriteLine("The way is shut!");
                         }
                         break;
 
@@ -109,7 +86,7 @@ namespace Zork.Common
                             }
                             break;
                         }
-                        outputString = null;
+                        
                             break;
 
                     case Commands.Drop:
@@ -129,7 +106,7 @@ namespace Zork.Common
                             }
                             break;
                         }
-                        outputString = null;
+                        
                         break;
 
                     case Commands.Inventory:
@@ -146,16 +123,14 @@ namespace Zork.Common
                             Output.WriteLine("You are empty handed.");
                         }
                         
-                        outputString = null;
+                        
                         break;
 
                     default:
-                        outputString = "Unknown command.";
+                        Output.WriteLine("Unknown command.");
                         break;
                 }
-               
-                 Output.WriteLine(outputString);
-            }
+
         }
         private static Commands ToCommand(string commandString) => Enum.TryParse(commandString, true, out Commands result) ? result : Commands.Unknown;
     }

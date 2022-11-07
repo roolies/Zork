@@ -15,10 +15,17 @@ namespace Zork.Cli
             Game game = JsonConvert.DeserializeObject<Game>(File.ReadAllText(gameFilename));
 
             var output = new ConsoleOutputService();
+            var input = new ConsoleInputService();
 
             Console.WriteLine("Welcome to Zork!");
-            game.Run(output);
-            Console.WriteLine("Finished.");
+            game.Run(input, output);
+
+            while (game.IsRunning)
+            {
+                game.Output.Write("> ");
+                input.ProcessInput();
+            }
+            output.WriteLine("Finished.");
         }
 
         private enum CommandLineArguments
