@@ -35,7 +35,7 @@ namespace Zork.Common
             Input.InputReceived += OnInputReceived;
             Output.WriteLine("Welcome to Zork!");
             Look();
-            Output.WriteLine($"\n{Player.CurrentRoom}");
+            Output.WriteLine($"{Player.CurrentRoom}");
         }
 
         public void OnInputReceived(object sender, string inputString)
@@ -78,6 +78,7 @@ namespace Zork.Common
                 case Commands.West:
                     Directions direction = (Directions)command;
                     Output.WriteLine(Player.Move(direction) ? $"You moved {direction}." : "The way is shut!");
+                    
                     break;
 
                 case Commands.Take:
@@ -105,11 +106,11 @@ namespace Zork.Common
                 case Commands.Inventory:
                     if (Player.Inventory.Count() == 0)
                     {
-                        Console.WriteLine("You are empty handed.");
+                        Output.WriteLine("You are empty handed.");
                     }
                     else
                     {
-                        Console.WriteLine("You are carrying:");
+                        Output.WriteLine("You are carrying:");
                         foreach (Item item in Player.Inventory)
                         {
                             Output.WriteLine(item.InventoryDescription);
@@ -117,17 +118,28 @@ namespace Zork.Common
                     }
                     break;
 
+                case Commands.Reward:
+
+                    break;
+
+                case Commands.Score:
+
+                    break;
+
                 default:
                     Output.WriteLine("Unknown command.");
                     break;
             }
-
+            if (command  != Commands.Reward && command != Commands.Score && command != Commands.Unknown)
+            {
+                Player.Moves += 1;
+            }
             if (ReferenceEquals(previousRoom, Player.CurrentRoom) == false)
             {
                 Look();
             }
 
-            Output.WriteLine($"\n{Player.CurrentRoom}");
+            Output.WriteLine($"{Player.CurrentRoom}");
         }
         
         private void Look()
@@ -144,13 +156,13 @@ namespace Zork.Common
             Item itemToTake = Player.CurrentRoom.Inventory.FirstOrDefault(item => string.Compare(item.Name, itemName, ignoreCase: true) == 0);
             if (itemToTake == null)
             {
-                Console.WriteLine("You can't see any such thing.");                
+                Output.WriteLine("You can't see any such thing.");                
             }
             else
             {
                 Player.AddItemToInventory(itemToTake);
                 Player.CurrentRoom.RemoveItemFromInventory(itemToTake);
-                Console.WriteLine("Taken.");
+                Output.WriteLine("Taken.");
             }
         }
 
@@ -159,13 +171,13 @@ namespace Zork.Common
             Item itemToDrop = Player.Inventory.FirstOrDefault(item => string.Compare(item.Name, itemName, ignoreCase: true) == 0);
             if (itemToDrop == null)
             {
-                Console.WriteLine("You can't see any such thing.");                
+                Output.WriteLine("You can't see any such thing.");                
             }
             else
             {
                 Player.CurrentRoom.AddItemToInventory(itemToDrop);
                 Player.RemoveItemFromInventory(itemToDrop);
-                Console.WriteLine("Dropped.");
+                Output.WriteLine("Dropped.");
             }
         }
 
