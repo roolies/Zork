@@ -119,11 +119,11 @@ namespace Zork.Common
                     break;
 
                 case Commands.Reward:
-
+                    Player.Score += 1 ;
                     break;
 
                 case Commands.Score:
-
+                    Output.WriteLine($"Your score is {Player.Score} in {Player.Moves} move(s).");
                     break;
 
                 default:

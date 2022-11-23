@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using Zork.Common;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,13 +26,20 @@ public class GameManager : MonoBehaviour
         TextAsset gameJson = Resources.Load<TextAsset>("GameJson");
         _game = JsonConvert.DeserializeObject<Game>(gameJson.text);
         _game.Player.LocationChanged += Player_LocationChanged;
-        //_game.Player.MovesChanged += Player_MovesChanged;
+        _game.Player.ScoreChanged += Player_ScoreChanged;
+        _game.Player.MovesChanged += Player_MovesChanged;
         _game.Run(InputService, OutputService);
         LocationText.text = _game.Player.CurrentRoom.Name;
+        MovesText.text = _game.Player.Moves.ToString();
+        ScoreText.text = _game.Player.Score.ToString();
         
     }
 
-    private void Player_MovesChanged(int Moves)
+    private void Player_ScoreChanged(object sender, int Score)
+    {
+        ScoreText.text = Score.ToString();
+    }
+    private void Player_MovesChanged(object sender, int Moves)
     {
         MovesText.text = Moves.ToString();
     }
