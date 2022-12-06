@@ -37,24 +37,7 @@ namespace Zork.Common
                 }
             }
         }
-
-        public event EventHandler<int> ScoreChanged;
-        public int _score;
-        public int Score
-        {
-            get
-            {
-                return _score;
-            }
-            set
-            {
-                if (_score != value)
-                {
-                    _score = value;
-                    ScoreChanged?.Invoke(this, _score);
-                }
-            }
-        }
+        public int Score;
 
         public IEnumerable<Item> Inventory => _inventory;
 
