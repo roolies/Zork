@@ -19,7 +19,6 @@ namespace Zork.Common
 
         [JsonIgnore]
         public bool IsRunning { get; private set; }
-
         public Game(World world, string startingLocation)
         {
             World = world;
@@ -103,6 +102,39 @@ namespace Zork.Common
                     }
                     break;
 
+                case Commands.Place:
+                    if (string.IsNullOrEmpty(subject))
+                    {
+                        Output.WriteLine("This command requires a subject.");
+                    }
+                    else
+                    {
+                        Place(subject);
+                    }
+                    break;
+
+                case Commands.Remove:
+                    if (string.IsNullOrEmpty(subject))
+                    {
+                        Output.WriteLine("This command requires a subject.");
+                    }
+                    else
+                    {
+                        Remove(subject);
+                    }
+                    break;
+
+                case Commands.Eat:
+                    if (string.IsNullOrEmpty(subject))
+                    {
+                        Output.WriteLine("This command requires a subject.");
+                    }
+                    else
+                    {
+                        Eat(subject);
+                    }
+                    break;
+
                 case Commands.Inventory:
                     if (Player.Inventory.Count() == 0)
                     {
@@ -119,11 +151,12 @@ namespace Zork.Common
                     break;
 
                 case Commands.Reward:
+                    Player.Score += 1;
 
                     break;
 
                 case Commands.Score:
-
+                    Output.WriteLine($"Your score is {Player.Score} in {Player.Moves} move(s).");
                     break;
 
                 default:
@@ -163,6 +196,8 @@ namespace Zork.Common
                 Player.AddItemToInventory(itemToTake);
                 Player.CurrentRoom.RemoveItemFromInventory(itemToTake);
                 Output.WriteLine("Taken.");
+                Player.Score += 10;
+                
             }
         }
 
@@ -178,6 +213,61 @@ namespace Zork.Common
                 Player.CurrentRoom.AddItemToInventory(itemToDrop);
                 Player.RemoveItemFromInventory(itemToDrop);
                 Output.WriteLine("Dropped.");
+            }
+        }
+
+        private void Place(string itemName)
+        {
+            Item itemToPlace = Player.Inventory.FirstOrDefault(item => string.Compare(item.Name, itemName, ignoreCase: true) == 0);
+            if (itemToPlace == null)
+            {
+                Output.WriteLine("You can't see any such thing.");
+            }
+           else if (Player.CurrentRoom.IsLivingRoom == true)
+            {
+                Player.CurrentRoom.AddItemToTrophyCase(itemToPlace);
+                Player.RemoveItemFromInventory(itemToPlace);
+                Output.WriteLine("Placed in trophy case.");
+            }
+            else if (Player.CurrentRoom.IsLivingRoom == false)
+            {
+                Output.WriteLine("There's no trophy case here.");
+            }
+        }
+
+        private void Remove(string itemName)
+        {
+            Item itemToRemove = Player.CurrentRoom.TrophyCaseInventory.FirstOrDefault(item => string.Compare(item.Name, itemName, ignoreCase: true) == 0);
+            if (Player.CurrentRoom.IsLivingRoom == true)
+            {
+                Player.AddItemToInventory(itemToRemove);
+                Player.CurrentRoom.RemoveItemFromTrophyCase(itemToRemove);
+                Output.WriteLine("Removed from the trophy case.");
+            }
+            else if (itemToRemove == null)
+            {
+                Output.WriteLine("You can't see any such thing.");
+            }
+            else
+            {
+                Output.WriteLine("There's no trophy case here.");
+            }
+        }
+        private void Eat(string itemName)
+        {
+            Item edibleItem = Player.Inventory.FirstOrDefault(item => string.Compare(item.Name, itemName, ignoreCase: true) == 0);
+            if (edibleItem == null)
+            {
+                Output.WriteLine("You have nothing to eat.");
+            }
+            else if (edibleItem.IsEdible == false)
+            {
+                Output.WriteLine("I don't think this item would agree with you.");
+            }
+            else if (edibleItem.IsEdible == true)
+            {
+                Player.RemoveItemFromInventory(edibleItem);
+                Output.WriteLine("Thank you very much. It really hit the spot");
             }
         }
 

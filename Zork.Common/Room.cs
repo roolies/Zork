@@ -11,6 +11,8 @@ namespace Zork.Common
 
         public string Description { get; set; }
 
+        public bool IsLivingRoom { get; }
+
         [JsonIgnore]
         public IReadOnlyDictionary<Directions, Room> Neighbors => _neighbors;
 
@@ -20,10 +22,13 @@ namespace Zork.Common
         [JsonIgnore]
         public IEnumerable<Item> Inventory => _inventory;
 
+        [JsonIgnore]
+        public IEnumerable<Item> TrophyCaseInventory => _trophycaseinventory;
+
         [JsonProperty]
         private string[] InventoryNames { get; set; }
 
-        public Room(string name, string description, Dictionary<Directions, string> neighborNames, string[] inventoryNames)
+        public Room(string name, string description, Dictionary<Directions, string> neighborNames, string[] inventoryNames, bool isLivingRoom)
         {
             Name = name;
             Description = description;
@@ -32,6 +37,8 @@ namespace Zork.Common
 
             InventoryNames = inventoryNames ?? new string[0];
             _inventory = new List<Item>();
+            _trophycaseinventory = new List<Item>();
+            IsLivingRoom = isLivingRoom;
         }
 
         public static bool operator ==(Room lhs, Room rhs)
@@ -93,9 +100,28 @@ namespace Zork.Common
             }
         }
 
+        public void AddItemToTrophyCase(Item itemToAdd)
+        {
+            if (_trophycaseinventory.Contains(itemToAdd))
+            {
+                throw new Exception($"Item {itemToAdd} already exists in the trophy case.");
+            }
+
+            _trophycaseinventory.Add(itemToAdd);
+        }
+
+        public void RemoveItemFromTrophyCase(Item itemToRemove)
+        {
+            if (_trophycaseinventory.Remove(itemToRemove) == false)
+            {
+                throw new Exception("Could not remove item from trophy case.");
+            }
+        }
+
         public override string ToString() => Name;
 
         private readonly List<Item> _inventory;
+        private readonly List<Item> _trophycaseinventory;
         private readonly Dictionary<Directions, Room> _neighbors;
     }
 }

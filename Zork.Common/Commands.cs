@@ -22,6 +22,9 @@
         I = Inventory,
         Reward,
         Score,
+        Eat,
+        Place,
+        Remove,
         Unknown
     }
 }

@@ -17,6 +17,7 @@ namespace Zork.Common
         [JsonIgnore]
         public IReadOnlyDictionary<string, Item> ItemsByName => _itemsByName;
 
+
         public World(Room[] rooms, Item[] items)
         {
             Rooms = rooms;
