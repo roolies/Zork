@@ -57,9 +57,7 @@ namespace Zork.Common
                 }
             }
         }
-
         public IEnumerable<Item> Inventory => _inventory;
-
         public Player(World world, string startingLocation)
         {
             _world = world;

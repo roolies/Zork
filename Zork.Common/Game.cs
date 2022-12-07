@@ -36,7 +36,6 @@ namespace Zork.Common
             Look();
             Output.WriteLine($"{Player.CurrentRoom}");
         }
-
         public void OnInputReceived(object sender, string inputString)
         {
             char separator = ' ';
@@ -200,7 +199,6 @@ namespace Zork.Common
                 
             }
         }
-
         private void Drop(string itemName)
         {
             Item itemToDrop = Player.Inventory.FirstOrDefault(item => string.Compare(item.Name, itemName, ignoreCase: true) == 0);
@@ -215,7 +213,6 @@ namespace Zork.Common
                 Output.WriteLine("Dropped.");
             }
         }
-
         private void Place(string itemName)
         {
             Item itemToPlace = Player.Inventory.FirstOrDefault(item => string.Compare(item.Name, itemName, ignoreCase: true) == 0);
